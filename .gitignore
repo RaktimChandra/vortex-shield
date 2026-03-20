@@ -78,5 +78,10 @@ logs/
 htmlcov/
 .pytest_cache/
 
-# Temporary demo files
+# Internal documentation and demo files
 ADD_SAMPLE_CLAIMS.sh
+DEMO_PHOTO_GUIDE.md
+DEMO_SPEECH.md
+GITHUB_SETUP.md
+PROJECT_MEMORY.md
+SESSION_FINAL_MEMORY.md
