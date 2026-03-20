@@ -852,11 +852,9 @@ Password: password123
 
 ## 📞 **Contact & Links**
 
-**Live Demo:** [http://localhost:3000](http://localhost:3000)  
-**API Docs:** [http://localhost:8001/docs](http://localhost:8001/docs)  
-**GitHub:** https://github.com/RaktimChandra/vortex-shield.git
-**Team:** Team VORTEX
-**Email:** raktimchandra26@gmail.com / rc8823@srmist.edu.in
+**GitHub:** [https://github.com/RaktimChandra/vortex-shield.git]
+**Team:** [Team VORTEX]
+**Email:** [raktimchandra26@gmail.com / rc8823@srmist.edu.in]
 
 ---
 
