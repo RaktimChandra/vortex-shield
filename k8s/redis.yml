@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vortex-redis
+  namespace: vortex-shield
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vortex-redis
+  template:
+    metadata:
+      labels:
+        app: vortex-redis
+    spec:
+      containers:
+      - name: redis
+        image: redis:7-alpine
+        ports:
+        - containerPort: 6379
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+        volumeMounts:
+        - name: redis-data
+          mountPath: /data
+      volumes:
+      - name: redis-data
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vortex-redis
+  namespace: vortex-shield
+spec:
+  selector:
+    app: vortex-redis
+  ports:
+  - port: 6379
+    targetPort: 6379
+  type: ClusterIP

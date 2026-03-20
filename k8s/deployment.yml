@@ -1,0 +1,155 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vortex-backend
+  namespace: vortex-shield
+  labels:
+    app: vortex-backend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: vortex-backend
+  template:
+    metadata:
+      labels:
+        app: vortex-backend
+    spec:
+      containers:
+      - name: backend
+        image: vortex-backend:latest
+        ports:
+        - containerPort: 8000
+        env:
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: vortex-secrets
+              key: database-url
+        - name: SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: vortex-secrets
+              key: secret-key
+        - name: REDIS_URL
+          value: redis://vortex-redis:6379/0
+        - name: ENVIRONMENT
+          value: production
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vortex-frontend
+  namespace: vortex-shield
+  labels:
+    app: vortex-frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: vortex-frontend
+  template:
+    metadata:
+      labels:
+        app: vortex-frontend
+    spec:
+      containers:
+      - name: frontend
+        image: vortex-frontend:latest
+        ports:
+        - containerPort: 3000
+        env:
+        - name: NEXT_PUBLIC_API_URL
+          value: https://api.vortexshield.com
+        - name: NEXT_PUBLIC_WS_URL
+          value: wss://api.vortexshield.com
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vortex-backend
+  namespace: vortex-shield
+spec:
+  selector:
+    app: vortex-backend
+  ports:
+  - protocol: TCP
+    port: 8000
+    targetPort: 8000
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vortex-frontend
+  namespace: vortex-shield
+spec:
+  selector:
+    app: vortex-frontend
+  ports:
+  - protocol: TCP
+    port: 3000
+    targetPort: 3000
+  type: ClusterIP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: vortex-ingress
+  namespace: vortex-shield
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  tls:
+  - hosts:
+    - vortexshield.com
+    - api.vortexshield.com
+    secretName: vortex-tls
+  rules:
+  - host: vortexshield.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: vortex-frontend
+            port:
+              number: 3000
+  - host: api.vortexshield.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: vortex-backend
+            port:
+              number: 8000

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #f59e0b 0%, #dc2626 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+        }
+        .content {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 0 0 10px 10px;
+        }
+        .risk-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .risk-high {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+        .risk-medium {
+            background: #fef3c7;
+            color: #d97706;
+        }
+        .factors {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .factor-item {
+            padding: 10px;
+            margin: 10px 0;
+            border-left: 3px solid #f59e0b;
+            background: #fffbeb;
+        }
+        .recommendations {
+            background: #ecfdf5;
+            border-left: 4px solid #10b981;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .btn {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 12px 30px;
+            text-decoration: none;
+            border-radius: 6px;
+            margin: 20px 0;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #6b7280;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>⚠️ High Risk Alert</h1>
+        <p>Disruption risk detected in your zone</p>
+    </div>
+    
+    <div class="content">
+        <p>Dear {{ user_name }},</p>
+        
+        <p>Our AI risk prediction system has detected elevated risk levels in your working zone.</p>
+        
+        <center>
+            <span class="risk-badge {{ risk_class }}">{{ risk_level }} RISK</span>
+            <h2 style="margin: 10px 0;">Risk Score: {{ risk_score }}</h2>
+        </center>
+        
+        <div class="factors">
+            <h3>Risk Factors Detected:</h3>
+            {% for factor_key, factor in risk_factors.items() %}
+            <div class="factor-item">
+                <strong>{{ factor.impact }}</strong><br>
+                <small>Severity: {{ factor.severity }}</small>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="recommendations">
+            <h3>📋 Recommendations:</h3>
+            <ul>
+                {% for recommendation in recommendations %}
+                <li>{{ recommendation }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        
+        <p><strong>Your Coverage:</strong> Your parametric insurance is active and will automatically trigger if conditions meet the threshold.</p>
+        
+        <center>
+            <a href="{{ dashboard_url }}" class="btn">View Live Risk Dashboard</a>
+        </center>
+    </div>
+    
+    <div class="footer">
+        <p>This is an automated risk alert from VORTEX Shield 2.0</p>
+        <p>Stay safe and protected!</p>
+    </div>
+</body>
+</html>

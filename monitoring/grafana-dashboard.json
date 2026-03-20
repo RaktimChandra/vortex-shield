@@ -1,0 +1,102 @@
+{
+  "dashboard": {
+    "title": "VORTEX Shield 2.0 - Main Dashboard",
+    "tags": ["vortex", "production"],
+    "timezone": "browser",
+    "panels": [
+      {
+        "id": 1,
+        "title": "Request Rate",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(http_requests_total[5m])",
+            "legendFormat": "{{method}} {{endpoint}}"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Response Time (95th percentile)",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m]))",
+            "legendFormat": "95th percentile"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Error Rate",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(http_requests_total{status=~\"5..\"}[5m])",
+            "legendFormat": "5xx errors"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "AI Model Predictions",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(ai_predictions_total[5m])",
+            "legendFormat": "{{model}}"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Claims Processing",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "sum(claims_processed_total)",
+            "legendFormat": "Total Claims"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "title": "Fraud Detections",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "sum(fraud_detections_total)",
+            "legendFormat": "Fraud Detected"
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "title": "Database Connections",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "pg_stat_database_numbackends",
+            "legendFormat": "Active Connections"
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "title": "Cache Hit Rate",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(redis_keyspace_hits_total[5m]) / (rate(redis_keyspace_hits_total[5m]) + rate(redis_keyspace_misses_total[5m]))",
+            "legendFormat": "Hit Rate"
+          }
+        ]
+      }
+    ],
+    "refresh": "30s",
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    }
+  }
+}

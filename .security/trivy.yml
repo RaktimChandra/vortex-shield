@@ -1,0 +1,35 @@
+# Trivy Security Scanning Configuration
+scan:
+  security-checks:
+    - vuln
+    - config
+    - secret
+
+severity:
+  - CRITICAL
+  - HIGH
+  - MEDIUM
+
+ignore-unfixed: false
+
+exit-code: 1
+
+format: sarif
+
+output: trivy-results.sarif
+
+scanners:
+  - vuln
+  - secret
+  - config
+
+vulnerability:
+  type:
+    - os
+    - library
+
+secret:
+  config: .security/secret-scan.yml
+
+cache:
+  clear: false
